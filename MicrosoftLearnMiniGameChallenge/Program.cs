@@ -39,13 +39,32 @@
 
             while (!shouldExit)
             {
-                CheckIfResized();
+                CloseIfResized();
                 Move();
             }
 
 
+            bool PlayerIsDazed()
+            {
+                if (player == "(X_X)")
+                    return true;
+                return false;
+            }
+            bool PlayerIsEnergized()
+            {
+                if (player == "(^-^)")
+                    return true;
+                return false;
+            }
 
-
+            bool CheckIfPlayerConsumedFood()
+            {
+                if (playerX == foodX && playerY ==foodY)
+                {
+                    return true;
+                }
+                return false;
+            }
 
             // Returns true if the Terminal was resized 
             bool TerminalResized()
@@ -84,24 +103,38 @@
             }
 
             // Reads directional input from the Console and moves the player
-            void Move(bool detectNondirectionalInput = false)
+            void Move(bool detectNondirectionalInput = false, int speedBoost = 3)
             {
                 int lastX = playerX;
                 int lastY = playerY;
+
+                if (PlayerIsDazed())
+                {
+                    FreezePlayer();
+                }
+                if (PlayerIsEnergized())
+                {
+                    playerX += speedBoost;
+                    playerY += speedBoost;
+                }
 
                 switch (Console.ReadKey(true).Key)
                 {
                     case ConsoleKey.UpArrow:
                         playerY--;
+                        playerY -= speedBoost;
                         break;
                     case ConsoleKey.DownArrow:
                         playerY++;
+                        playerY += speedBoost;
                         break;
                     case ConsoleKey.LeftArrow:
                         playerX--;
+                        playerX -= speedBoost;
                         break;
                     case ConsoleKey.RightArrow:
                         playerX++;
+                        playerX += speedBoost;
                         break;
                     case ConsoleKey.Escape:
                         shouldExit = true;
@@ -128,6 +161,12 @@
                 // Draw the player at the new location
                 Console.SetCursorPosition(playerX, playerY);
                 Console.Write(player);
+
+                if (CheckIfPlayerConsumedFood())
+                {
+                    ChangePlayer();
+                    ShowFood();
+                }
             }
 
             // Clears the console, displays the food and player
@@ -139,9 +178,9 @@
                 Console.Write(player);
             }
 
-            void CheckIfResized()
+            void CloseIfResized()
             {
-                if ( height != (Console.WindowHeight - 1) || width != (Console.WindowWidth - 5) )
+                if ( TerminalResized() )
                 {
                     Console.Clear();
                     Console.WriteLine("Console was resized. Program exiting.");
