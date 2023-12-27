@@ -32,10 +32,7 @@
 
 
 
-
-
             InitializeGame();
-
 
             while (!shouldExit)
             {
@@ -44,26 +41,15 @@
             }
 
 
-            bool PlayerIsDazed()
-            {
-                if (player == "(X_X)")
-                    return true;
-                return false;
-            }
-            bool PlayerIsEnergized()
-            {
-                if (player == "(^-^)")
-                    return true;
-                return false;
-            }
 
-            bool CheckIfPlayerConsumedFood()
+
+            // Clears the console, displays the food and player
+            void InitializeGame()
             {
-                if (playerX == foodX && playerY ==foodY)
-                {
-                    return true;
-                }
-                return false;
+                Console.Clear();
+                ShowFood();
+                Console.SetCursorPosition(0, 0);
+                Console.Write(player);
             }
 
             // Returns true if the Terminal was resized 
@@ -103,7 +89,7 @@
             }
 
             // Reads directional input from the Console and moves the player
-            void Move(bool detectNondirectionalInput = false, int speedBoost = 3)
+            void Move(bool detectNondirectionalInput = false, int speedBoost = 0)
             {
                 int lastX = playerX;
                 int lastY = playerY;
@@ -114,19 +100,16 @@
                 }
                 if (PlayerIsEnergized())
                 {
-                    playerX += speedBoost;
-                    playerY += speedBoost;
+                    speedBoost = 3;
                 }
 
                 switch (Console.ReadKey(true).Key)
                 {
                     case ConsoleKey.UpArrow:
                         playerY--;
-                        playerY -= speedBoost;
                         break;
                     case ConsoleKey.DownArrow:
                         playerY++;
-                        playerY += speedBoost;
                         break;
                     case ConsoleKey.LeftArrow:
                         playerX--;
@@ -169,13 +152,13 @@
                 }
             }
 
-            // Clears the console, displays the food and player
-            void InitializeGame()
+            bool CheckIfPlayerConsumedFood()
             {
-                Console.Clear();
-                ShowFood();
-                Console.SetCursorPosition(0, 0);
-                Console.Write(player);
+                if (playerX == foodX && playerY ==foodY)
+                {
+                    return true;
+                }
+                return false;
             }
 
             void CloseIfResized()
@@ -190,6 +173,20 @@
                 {
                     shouldExit = false;
                 }
+            }
+
+            bool PlayerIsDazed()
+            {
+                if (player == "(X_X)")
+                    return true;
+                return false;
+            }
+
+            bool PlayerIsEnergized()
+            {
+                if (player == "(^-^)")
+                    return true;
+                return false;
             }
         }
     }
